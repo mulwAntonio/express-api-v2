@@ -1,24 +1,17 @@
 import express, { Express } from "express";
 import morgan from "morgan";
+import authRouter from "./routes/authRoute.js";
+import { GlobalErrorHandler } from "./utils/middlewares.js";
 
 const app: Express = express();
 const PORT = 3001;
 app.use(express.json());
 app.use(morgan("dev"));
 
-app.post("/data", (req, res) => {
-  const formData = req.body;
+// routes
+app.use("/api/auth", authRouter);
 
-  if (Object.keys(formData).length < 1) {
-    res.status(400).json({ msg: "Form data required!" });
-
-    return;
-  }
-  res.json({ payload: formData });
-});
-
-app.get("/", (req, res) => {
-  res.json({ msg: "Hello world!" });
-});
+// error handler
+app.use(GlobalErrorHandler);
 
 app.listen(PORT, () => console.log(`Running at port :${PORT}`));
