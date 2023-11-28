@@ -1,8 +1,9 @@
 # folders
-
 node_modules/
 .vscode/
 dist/
 
+
 # files
 *.env
+*.db

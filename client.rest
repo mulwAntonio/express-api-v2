@@ -1,12 +1,25 @@
 
 
+#### LOGIN
 
 POST http://127.0.0.1:3001/api/auth/login HTTP/1.1
 content-type: application/json
 
 {
+   
+    "password":"antonypaswod",
+    "email":"antony@mail.com"
+   
+}
+
+#### REGISTER
+
+POST http://127.0.0.1:3001/api/auth/register HTTP/1.1
+content-type: application/json
+
+{
     "username":"antony",
     "password":"antonypasword",
-    "email":"antony@mail.com",
-    "dummy":"sdfs"
+    "email":"antony@mail.com"
+   
 }
