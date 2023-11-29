@@ -7,11 +7,20 @@ import {
 } from "./formTypes.js";
 import { prismaDB } from "../utils/prisma.js";
 import bcrypt from "bcryptjs";
+import { AuthorizeAccess, GenToken } from "./jwt.js";
+import {
+  EventHandler,
+  EventNames,
+  MutateRefreshTokenPayloadObj,
+} from "../utils/events.js";
 
 const authRouter = Router();
 
 // routes
-authRouter.post("/login", Login).post("/register", Register);
+authRouter
+  .post("/login", Login)
+  .post("/register", Register)
+  .post("/logout", AuthorizeAccess, Logout);
 
 // controllers
 async function Login(req: Request, res: Response, next: NextFunction) {
@@ -35,8 +44,28 @@ async function Login(req: Request, res: Response, next: NextFunction) {
     }
 
     // remember to gen token
+    let accessToken = GenToken({
+      userData: {
+        userId: user.userId,
+        email: user.email,
+      },
+    });
 
-    res.json({ msg: "Login route", user: user });
+    EventHandler.emit(EventNames[0], {
+      token: GenToken({
+        userData: {
+          userId: user.userId,
+          email: user.email,
+        },
+        isRefresh: true,
+      }),
+      userId: user.userId,
+      type: "save",
+    } as MutateRefreshTokenPayloadObj);
+
+    res
+      .setHeader("authorization", `Bearer ${accessToken}`)
+      .json({ msg: "Login route", user: user });
   } catch (error) {
     next(error);
   }
@@ -48,7 +77,7 @@ async function Register(req: Request, res: Response, next: NextFunction) {
   try {
     const validForm = RegisterForm.parse(formData);
 
-    let newUser = await prismaDB.user.create({
+    await prismaDB.user.create({
       data: {
         email: validForm.email,
         password: await bcrypt.hash(validForm.password, bcrypt.genSaltSync(10)),
@@ -56,10 +85,19 @@ async function Register(req: Request, res: Response, next: NextFunction) {
       },
     });
 
-    res.json({ msg: "Register route", user: newUser });
+    res.status(201).json({ msg: "User created success" });
   } catch (error) {
     next(error);
   }
+}
+
+async function Logout(req: Request, res: Response, next: NextFunction) {
+  EventHandler.emit(EventNames[0], {
+    userId: req.userID,
+    type: "remove",
+  } as MutateRefreshTokenPayloadObj);
+
+  res.setHeader("authorization", "").json({ msg: "Logged out success" });
 }
 
 export default authRouter;

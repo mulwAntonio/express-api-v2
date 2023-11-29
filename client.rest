@@ -7,7 +7,7 @@ content-type: application/json
 
 {
    
-    "password":"antonypaswod",
+    "password":"antonypasword",
     "email":"antony@mail.com"
    
 }
@@ -23,3 +23,10 @@ content-type: application/json
     "email":"antony@mail.com"
    
 }
+
+
+#### LOGOUT
+
+POST http://127.0.0.1:3001/api/auth/logout HTTP/1.1
+content-type: application/json
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MjI1YmM1ZS1jNWQ0LTQ4YTAtYTNmZC0xYmJjNmY2MTQ0MmIiLCJpYXQiOjE3MDEyNDE0MjAsImV4cCI6MTcwMTI0MjAyMCwiYXVkIjoiOTIyNWJjNWUtYzVkNC00OGEwLWEzZmQtMWJiYzZmNjE0NDJiIiwiaXNzIjoidmVyeS1zZWNyZXQtcGVyc29uIiwic3ViIjoiYXV0aG9yaXphdGlvbi1hY2Nlc3MifQ.M54yjkGoBu0VLtF3TncHb_KE6IhBM1mRP39Y_yVuFac
